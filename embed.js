@@ -28,4 +28,13 @@
   // Insert immediately after our own tag, so the recorder appears exactly where
   // the site owner placed the snippet.
   tag.parentNode.insertBefore(f, tag.nextSibling);
+  // What makes this snippet BETTER than pasting the raw iframe: the recorder posts
+  // its content height and we fit the frame to it (no fixed 640px box, no inner
+  // scrollbars), and the page background is transparent so the host theme shows
+  // through. Height messages carry no data and are matched to OUR frame + origin.
+  window.addEventListener('message', function (e) {
+    if (e.source !== f.contentWindow) return;
+    if (e.origin !== 'https://rulingants.github.io') return;
+    if (e.data && e.data.fxCrowd === 'height' && e.data.h > 0) f.style.height = Math.min(e.data.h, 1200) + 'px';
+  });
 })();
