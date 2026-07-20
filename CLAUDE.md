@@ -20,8 +20,15 @@ not here.** To change behavior, edit the editor repo's `js/`. Do **not** copy
 engine code into this repo. This repo holds ONLY:
 
 - `index.html` — the shell (sets `window.__MODE='crowd'`)
-- `embed.js` — the one-tag iframe embed snippet for third-party sites
+- `embed.js` — the one-tag **script** embed snippet for third-party sites (injects
+  and auto-sizes the iframe itself — see "Embedding" below)
 - `icons/` — the favicon (green sibling of the Text Recorder icon)
+
+### ⚠ Consent modal markup — KEEP IN SYNC across three shells
+`index.html` here carries the consent modal markup (recorded-response → typed
+signature → yes/no **radio** choices, one submit) **stamped identically** into the
+editor's and the text-recorder's `index.html` as well. The shared engine only
+wires behavior onto that markup — change one copy, change all three.
 
 ## Deliberately NOT a PWA — no manifest, no service worker, no offline
 
@@ -38,8 +45,10 @@ Unlike the sibling `text-recorder`, this app must **never install or cache**:
   keeps it public-but-unsearchable.
 
 The one durability the page DOES need — not losing a recording if the submit
-fails mid-flight — is handled by the **engine** (IndexedDB pending store in the
-editor repo), not by any caching here.
+fails mid-flight — is handled by the **engine**, not by any caching here: unsent
+takes persist in this page's **own IndexedDB (`flextext-crowd`)** until the
+Worker **confirms Drive delivery**, and retry silently when the visitor returns
+(the code for that store lives in the editor repo).
 
 ## Architecture / where things live
 
